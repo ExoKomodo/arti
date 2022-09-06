@@ -17,13 +17,14 @@ import (
 
 type Server struct {
 	Log    zerolog.Logger
-	Routes http.Handler
+	Routes *chi.Mux
 	Ctx    context.Context
 }
 
 func New() Server {
 	s := Server{}
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+	// log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	logger := httplog.NewLogger("leadster", httplog.Options{
 		// JSON: true,
 		Concise: true,
@@ -32,6 +33,7 @@ func New() Server {
 		// 	"env":     "dev",
 		// },
 	})
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	s.Log = logger
 	s.Log.Info().Int("pid", os.Getpid()).Int("uid", os.Getuid()).Int("gid", os.Getgid()).Msg("Server started")
 
@@ -94,7 +96,7 @@ func (s *Server) triggerShutdown(ctx context.Context, server *http.Server) {
 	}
 }
 
-func service(logger zerolog.Logger) http.Handler {
+func service(logger zerolog.Logger) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Heartbeat("/ping"))
