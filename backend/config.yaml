@@ -1,0 +1,10 @@
+---
+# environment: "development"
+server:
+  address: "127.0.0.1:5555"
+  timeout: 10  # in seconds
+  shutdown: 30  # in seconds
+logLevel: "debug"  # trace, debug, info, warn, error, fatal, panic
+db:
+  url: "db.bit.io:5432"
+  db: "sgrow/staging"

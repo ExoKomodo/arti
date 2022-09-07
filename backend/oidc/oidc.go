@@ -6,11 +6,12 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
-	"net/http"
 	"io"
+	"net/http"
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -26,9 +27,12 @@ type OIDC struct {
 }
 
 func New(srv server.Server) *OIDC{
+	paths := []string{"auth.google.clientId", "auth.google.clientSecret"}
+	server.RequiredConfig(paths, srv.Log)
+
 	provider, err := oidc.NewProvider(srv.Ctx, "https://accounts.google.com")
 	if err != nil {
-		// handle error
+		srv.Log.Fatal().Err(err).Msg("Could not create provider")
 	}
 	
 	oidcConfig := &oidc.Config{
@@ -37,8 +41,8 @@ func New(srv server.Server) *OIDC{
 	
 	// Configure an OpenID Connect aware OAuth2 client.
 	oauth2Config := oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: "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",
+		ClientID:     viper.GetString("auth.google.clientId"),
+		ClientSecret: viper.GetString("auth.google.clientSecret"),
 		RedirectURL:  "http://127.0.0.1:5555/auth/google/callback",
 
 		// Discovery returns the OAuth2 endpoints.

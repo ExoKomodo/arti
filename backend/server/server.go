@@ -11,8 +11,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"
-	"github.com/rs/zerolog/pkgerrors"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/pkgerrors"
+	"github.com/spf13/viper"
 )
 
 type Server struct {
@@ -33,14 +34,18 @@ func New() Server {
 		// 	"env":     "dev",
 		// },
 	})
-	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	level, err := zerolog.ParseLevel(viper.GetString("logLevel"))
+	if err != nil {
+		logger.Fatal().Err(err)
+	}
+	zerolog.SetGlobalLevel(level)
 	s.Log = logger
 	s.Log.Info().Int("pid", os.Getpid()).Int("uid", os.Getuid()).Int("gid", os.Getgid()).Msg("Server started")
 
-	timeout := time.Duration(10) * time.Second  // TODO
+	timeout := time.Duration(viper.GetInt("server.timeout")) * time.Second  // TODO
 	s.Routes = service(s.Log)
 	srv := &http.Server{
-		Addr:    "127.0.0.1:5555",
+		Addr:    viper.GetString("server.address"),
 		Handler: s.Routes,
 		// ReadHeaderTimeout is here as well
 		ReadTimeout:  timeout,
@@ -53,7 +58,7 @@ func New() Server {
 	s.Ctx = shutdownCtx
 
 	go func() {
-		// if err := srv.ListenAndServeTLS(certFile, keyFile); err != nil {
+		s.Log.Info().Str("address", srv.Addr).Msg("Starting server")
 		if err := srv.ListenAndServe(); err != nil {
 			s.Log.Error().Err(err).Msg("Server stopped")
 			s.triggerShutdown(shutdownCtx, srv)
@@ -70,7 +75,7 @@ func (s *Server) gracefullShutdown(server *http.Server) context.Context {
 	go func() {
 		<-sig
 		// Shutdown signal with grace period of 30 seconds TODO
-		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
+		shutdownCtx, _ := context.WithTimeout(serverCtx, viper.GetDuration("server.shutdown")*time.Second)
 
 		go func() {
 			<-shutdownCtx.Done()

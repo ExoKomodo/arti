@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	server.Config()
 	server := server.New()
 	oidc.New(server)
 	<-server.Ctx.Done()
