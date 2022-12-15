@@ -1,0 +1,26 @@
+name: "Build"
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        runs-on: [ubuntu-latest]
+        component: [backend]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+      - run: bash ./${{ matrix.component }}/build.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.component }}-${{ matrix.runs-on }}
+          path: dist/${{ matrix.component }}

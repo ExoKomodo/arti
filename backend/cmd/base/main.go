@@ -9,5 +9,5 @@ func main() {
 	server.Config()
 	server := server.New()
 	oidc.New(server)
-	<-server.Ctx.Done()
+	<-server.Ctx.Done(
 }
