@@ -1,7 +1,9 @@
 package server
 
 import (
+	v1 "arti/server/api/v1"
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,11 +24,11 @@ type Server struct {
 	Ctx    context.Context
 }
 
-func New() Server {
-	s := Server{}
+func New() (*Server, error) {
+	s := &Server{}
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 	// log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	logger := httplog.NewLogger("leadster", httplog.Options{
+	logger := httplog.NewLogger("arti", httplog.Options{
 		// JSON: true,
 		Concise: true,
 		// Tags: map[string]string{
@@ -42,8 +44,11 @@ func New() Server {
 	s.Log = logger
 	s.Log.Info().Int("pid", os.Getpid()).Int("uid", os.Getuid()).Int("gid", os.Getgid()).Msg("Server started")
 
-	timeout := time.Duration(viper.GetInt("server.timeout")) * time.Second  // TODO
-	s.Routes = service(s.Log)
+	timeout := time.Duration(viper.GetInt("server.timeout")) * time.Second // TODO
+	s.Routes, err = service(s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate service: %x", err)
+	}
 	srv := &http.Server{
 		Addr:    viper.GetString("server.address"),
 		Handler: s.Routes,
@@ -52,9 +57,7 @@ func New() Server {
 		WriteTimeout: timeout,
 		IdleTimeout:  timeout,
 	}
-	
-
-	shutdownCtx := s.gracefullShutdown(srv)
+	shutdownCtx := s.gracefulShutdown(srv)
 	s.Ctx = shutdownCtx
 
 	go func() {
@@ -65,10 +68,10 @@ func New() Server {
 		}
 	}()
 
-	return s
+	return s, nil
 }
 
-func (s *Server) gracefullShutdown(server *http.Server) context.Context {
+func (s *Server) gracefulShutdown(server *http.Server) context.Context {
 	serverCtx, serverStopCtx := context.WithCancel(context.Background())
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
@@ -101,18 +104,15 @@ func (s *Server) triggerShutdown(ctx context.Context, server *http.Server) {
 	}
 }
 
-func service(logger zerolog.Logger) *chi.Mux {
-	r := chi.NewRouter()
+func service(server *Server) (*chi.Mux, error) {
+	router := chi.NewRouter()
 
-	r.Use(middleware.Heartbeat("/ping"))
-	r.Use(httplog.RequestLogger(logger))
+	router.Use(middleware.Heartbeat("/ping"))
+	router.Use(httplog.RequestLogger(server.Log))
 
-	r.Get("/info", func(w http.ResponseWriter, r *http.Request) {
-		oplog := httplog.LogEntry(r.Context())
-		w.Header().Add("Content-Type", "text/plain")
-		oplog.Info().Msg("info here")
-		w.Write([]byte("info here"))
-	})
+	// Register controllers
+	v1.NewRootController().Register(router)
+	v1.NewArtifactsController().Register(router)
 
-	return r
+	return router, nil
 }

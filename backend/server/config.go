@@ -6,7 +6,7 @@ import (
 )
 
 func Config() {
-	log := httplog.NewLogger("leadster", httplog.Options{})
+	log := httplog.NewLogger("arti", httplog.Options{})
 
 	defaults()
 	viper.SetConfigName("config.secret")

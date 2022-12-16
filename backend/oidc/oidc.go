@@ -1,7 +1,7 @@
 package oidc
 
 import (
-	"leadster/server"
+	"arti/server"
 
 	"crypto/rand"
 	"encoding/base64"
@@ -16,17 +16,17 @@ import (
 )
 
 var (
-	clientID ="107115760075-jaftrtib3uqjdso1p82btsn2c3p6m1un.apps.googleusercontent.com"
+	clientID = "107115760075-jaftrtib3uqjdso1p82btsn2c3p6m1un.apps.googleusercontent.com"
 )
 
 type OIDC struct {
-	Config oauth2.Config
-	Server server.Server
+	Config   oauth2.Config
+	Server   server.Server
 	verifier *oidc.IDTokenVerifier
 	provider *oidc.Provider
 }
 
-func New(srv server.Server) *OIDC{
+func New(srv server.Server) *OIDC {
 	paths := []string{"auth.google.clientId", "auth.google.clientSecret"}
 	server.RequiredConfig(paths, srv.Log)
 
@@ -34,11 +34,11 @@ func New(srv server.Server) *OIDC{
 	if err != nil {
 		srv.Log.Fatal().Err(err).Msg("Could not create provider")
 	}
-	
+
 	oidcConfig := &oidc.Config{
 		ClientID: clientID,
 	}
-	
+
 	// Configure an OpenID Connect aware OAuth2 client.
 	oauth2Config := oauth2.Config{
 		ClientID:     viper.GetString("auth.google.clientId"),
@@ -119,7 +119,7 @@ func (o *OIDC) routeCallback(w http.ResponseWriter, r *http.Request) {
 	resp := struct {
 		OAuth2Token   *oauth2.Token
 		IDTokenClaims *json.RawMessage // ID Token payload is just JSON.
-		UserInfo    *oidc.UserInfo
+		UserInfo      *oidc.UserInfo
 	}{oauth2Token, new(json.RawMessage), userInfo}
 
 	if err := idToken.Claims(&resp.IDTokenClaims); err != nil {

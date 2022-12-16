@@ -1,13 +1,17 @@
 package main
 
 import (
-	"leadster/oidc"
-	"leadster/server"
+	"arti/oidc"
+	"arti/server"
+	"fmt"
 )
 
 func main() {
 	server.Config()
-	server := server.New()
-	oidc.New(server)
+	server, err := server.New()
+	if err != nil {
+		fmt.Printf("failed to create server: %x\n", err)
+	}
+	oidc.New(*server)
 	<-server.Ctx.Done()
 }

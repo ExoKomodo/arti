@@ -1,4 +1,4 @@
-module leadster
+module arti
 
 go 1.18
 
