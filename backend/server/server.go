@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "arti/server/api/v1"
+	api "arti/server/api"
 	"context"
 	"fmt"
 	"net/http"
@@ -110,9 +110,14 @@ func service(server *Server) (*chi.Mux, error) {
 	router.Use(middleware.Heartbeat("/ping"))
 	router.Use(httplog.RequestLogger(server.Log))
 
-	// Register controllers
-	v1.NewRootController().Register(router)
-	v1.NewArtifactsController().Register(router)
+	err := api.Register(api.NewRootController(), router)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register root controller: %v", err)
+	}
+	err = api.Register(api.NewArtifactsController(), router)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register artifacts controller: %v", err)
+	}
 
 	return router, nil
 }

@@ -1,3 +1,5 @@
 *secret*.yaml
 *secret*.yml
 .gebug
+dist/*
+!dist/.gitkeep
