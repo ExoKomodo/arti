@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	clientID = "107115760075-jaftrtib3uqjdso1p82btsn2c3p6m1un.apps.googleusercontent.com"
+	clientID = "XXX.apps.googleusercontent.com"
 )
 
 type OIDC struct {
