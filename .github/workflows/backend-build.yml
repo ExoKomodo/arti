@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - '*'
+    paths:
+      - 'ui/**'
   pull_request:
     branches:
       - 'main'
+    paths:
+      - 'ui/**'
 
 jobs:
   build:
