@@ -4,12 +4,12 @@ on:
     branches:
       - '*'
     paths:
-      - 'ui/**'
+      - 'backend/**'
   pull_request:
     branches:
       - 'main'
     paths:
-      - 'ui/**'
+      - 'backend/**'
 
 jobs:
   build:
