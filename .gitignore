@@ -1,3 +1,6 @@
 *secret*.yaml
 *secret*.yml
 .gebug
+
+docker/minio/
+docker/sqlite/
