@@ -10,11 +10,26 @@ services:
      - 9000:9000
      - 9001:9001
 #   credentials are 'minioadmin:minioadmin'     
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
+
+  ui-initialize:
+    image: node:18.12.1-alpine3.16  # this is lts-alpine3.16
+    working_dir: /app
+    volumes:
+      - "./ui:/app/:rw"
+    restart: "no"
+    command: npm install && chmod -R 777 node_modules && npm run check && chmod -R 777 .svelte-kit
+
+  ui:
+    image: node:18.12.1-alpine3.16  # this is lts-alpine3.16
+    working_dir: /app
+    volumes:
+      - "./ui:/app/:rw"
+    ports:
+      - 3000:3000
+      - 24678:24678
+      - 5173:5173
+    restart: "on-failure"
+    command: npm run dev
 
   sqlite3:
     build:
