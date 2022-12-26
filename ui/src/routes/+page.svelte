@@ -9,7 +9,7 @@
 
 Using nginx:
 <ul>
-<li><a href="http://localhost:8088/s3">S3 backend</a></li>
+<li><a href="http://localhost:8088/s3">S3 backend (this doesn't work)</a></li>
 <li><a href="http://localhost:8088/registry">Docker registry</a></li>
 <li><a href="http://localhost:8088">this page</a></li>
 </ul>
