@@ -1,0 +1,44 @@
+# https://docs.docker.com/registry/configuration/
+version: 0.1
+
+storage:
+  cache:
+    blobdescriptor: inmemory
+  s3:  # https://docs.docker.com/registry/storage-drivers/s3/
+    accesskey: Kxc4Of7R70QTSIGu
+    secretkey: S2QhENcyYQtEvpsxQ4Gw9Dg5oZc1o63i
+    region: us-east-1
+    regionendpoint: http://s3:9000
+    bucket: docker
+    secure: false
+    v4auth: true
+    chunksize: 5242880
+    rootdirectory: /
+  delete:
+    enabled: true
+  maintenance:
+    uploadpurging:
+      enabled: true
+      age: 168h
+      interval: 24h
+      dryrun: false
+    readonly:
+      enabled: false
+    
+http:
+  addr: :5000
+  secret: asecretforlocaldevelopment
+  headers:
+    X-Content-Type-Options: [nosniff]
+    Access-Control-Allow-Origin: ['*']
+    Access-Control-Allow-Methods: ['HEAD', 'GET', 'OPTIONS', 'DELETE']
+    Access-Control-Allow-Headers: ['Authorization', 'Accept']
+    Access-Control-Max-Age: [1728000]
+    Access-Control-Allow-Credentials: [true]
+    Access-Control-Expose-Headers: ['Docker-Content-Digest']
+
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
