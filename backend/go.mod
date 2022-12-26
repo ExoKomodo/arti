@@ -6,6 +6,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.3.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/httplog v0.2.5
+	github.com/google/uuid v1.3.0
 	github.com/rs/zerolog v1.27.0
 	github.com/spf13/viper v1.13.0
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
