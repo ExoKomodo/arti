@@ -39,6 +39,25 @@ services:
       - ./docker/sqlite/:/root/db/
     restart: "on-failure"
 
+  registry:
+    image: registry:2.8
+    ports:
+      - 5000:5000
+    volumes:
+     - ./docker/registry/config.yaml:/etc/docker/registry/config.yml
+    restart: "on-failure"
+    depends_on:
+      - s3
+
+  registry-ui:
+    image: joxit/docker-registry-ui:2.3.3
+    ports:
+      - 5500:80
+    environment:
+      - REGISTRY_TITLE=Arti Registry UI
+      - REGISTRY_URL=http://localhost:5000
+      - SINGLE_REGISTRY=true
+
   proxy:
     image: nginx:stable-alpine
     volumes:
