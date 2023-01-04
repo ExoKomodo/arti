@@ -1,6 +1,8 @@
 package artifacts
 
-func NewTextArtifact(path ArtifactPath, data []byte) (*TextArtifact, error) {
+import "arti/core"
+
+func NewTextArtifact(path ArtifactPath, data []byte) (*TextArtifact, *core.ArtiError) {
 	return &TextArtifact{
 		Data:       data,
 		IsArchived: false,
