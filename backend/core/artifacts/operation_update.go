@@ -1,8 +1,8 @@
 package artifacts
 
 import (
-	"arti/core"
 	"arti/core/operations"
+	"arti/lib/api"
 )
 
 func (operation UpdateOperation) GetId() operations.OperationId {
@@ -13,7 +13,7 @@ func (operation UpdateOperation) GetArtifact() Artifact {
 	return operation.Artifact
 }
 
-func NewUpdateOperation(artifact Artifact) (*UpdateOperation, *core.ArtiError) {
+func NewUpdateOperation(artifact Artifact) (*UpdateOperation, *api.ArtiError) {
 	id, err := operations.NewOperationId()
 	if err != nil {
 		return nil, err

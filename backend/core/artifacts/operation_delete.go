@@ -1,8 +1,8 @@
 package artifacts
 
 import (
-	"arti/core"
 	"arti/core/operations"
+	"arti/lib/api"
 )
 
 func (operation DeleteOperation) GetId() operations.OperationId {
@@ -13,7 +13,7 @@ func (operation DeleteOperation) GetPath() ArtifactPath {
 	return operation.Path
 }
 
-func NewDeleteOperation(path ArtifactPath) (*DeleteOperation, *core.ArtiError) {
+func NewDeleteOperation(path ArtifactPath) (*DeleteOperation, *api.ArtiError) {
 	id, err := operations.NewOperationId()
 	if err != nil {
 		return nil, err

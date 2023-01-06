@@ -1,14 +1,14 @@
 package artifacts
 
 import (
-	"arti/core"
+	"arti/lib/api"
 	"fmt"
 )
 
-func NewArtifact(kind ArtifactKind, path ArtifactPath, data []byte) (Artifact, *core.ArtiError) {
+func NewArtifact(kind ArtifactKind, path ArtifactPath, data []byte) (Artifact, *api.ArtiError) {
 	switch kind {
 	case TextArtifactKind:
 		return NewTextArtifact(path, data)
 	}
-	return nil, core.NewArtiError(core.UnsupportedArtifactKind, fmt.Errorf("%s", kind))
+	return nil, api.NewArtiError(api.UnsupportedArtifactKind, fmt.Errorf("%s", kind))
 }
