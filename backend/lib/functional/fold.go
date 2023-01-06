@@ -16,3 +16,15 @@ func FoldRight[T any](collection []T, reducer func(T, T) T, accumulator T) T {
 
 	return accumulator
 }
+
+func Reduce[T any](collection []T, reducer func(T, T) T) T {
+	length := len(collection)
+	if length == 0 {
+		var default T
+		return default
+	}
+	if length == 1 {
+		return collection[0]
+	}
+	return Fold(collection[:length-1], reducer, collection[length-1])
+}
