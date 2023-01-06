@@ -96,7 +96,7 @@ func archiveManyArtifacts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/json")
 	paths := []artifacts.ArtifactPath{"test"}
 	results := artifacts.ArchiveManyByPath(paths)
-	marshalResult(w, results)
+	marshalManyResults(w, results)
 }
 
 func deleteArtifact(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +109,7 @@ func deleteManyArtifacts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/json")
 	paths := []artifacts.ArtifactPath{"test"}
 	results := artifacts.DeleteManyByPath(paths)
-	marshalResult(w, results)
+	marshalManyResults(w, results)
 }
 
 func getArtifact(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +123,7 @@ func getManyArtifacts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/json")
 	paths := []artifacts.ArtifactPath{artifacts.ArtifactPath("test")}
 	results := artifacts.GetManyByPath(paths)
-	marshalResult(w, results)
+	marshalManyResults(w, results)
 }
 
 func updateArtifact(w http.ResponseWriter, r *http.Request) {
@@ -155,7 +155,7 @@ func updateManyArtifacts(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	)
-	marshalResult(w, results)
+	marshalManyResults(w, results)
 }
 
 func uploadArtifact(w http.ResponseWriter, r *http.Request) {
@@ -187,5 +187,5 @@ func uploadManyArtifacts(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	)
-	marshalResult(w, results)
+	marshalManyResults(w, results)
 }

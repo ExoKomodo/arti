@@ -1,13 +1,15 @@
 package artifacts
 
-import "arti/core/operations"
+import (
+	"arti/core/operations"
+	"arti/lib/api"
+)
 
 type ArtifactKind string
 
 const Unknown ArtifactKind = ""
 
 type ArtifactPath string
-type ArtifactError struct{}
 
 /*************/
 /* Artifacts */
@@ -39,7 +41,11 @@ type ArchiveRequest struct {
 
 type ArchiveResult struct {
 	Operation *ArchiveOperation `json:"operation"`
-	Err       error             `json:"err"`
+	Err       *api.ArtiError    `json:"err"`
+}
+
+func (r *ArchiveResult) Error() *api.ArtiError {
+	return r.Err
 }
 
 /**********/
@@ -56,7 +62,11 @@ type DeleteOperation struct {
 
 type DeleteResult struct {
 	Operation *DeleteOperation `json:"operation"`
-	Err       error            `json:"err"`
+	Err       *api.ArtiError   `json:"err"`
+}
+
+func (r *DeleteResult) Error() *api.ArtiError {
+	return r.Err
 }
 
 /*******/
@@ -67,8 +77,12 @@ type GetRequest struct {
 }
 
 type GetResult struct {
-	Artifact Artifact `json:"artifact"`
-	Err      error    `json:"err"`
+	Artifact Artifact       `json:"artifact"`
+	Err      *api.ArtiError `json:"err"`
+}
+
+func (r *GetResult) Error() *api.ArtiError {
+	return r.Err
 }
 
 /**********/
@@ -85,7 +99,11 @@ type UpdateOperation struct {
 
 type UpdateResult struct {
 	Operation *UpdateOperation `json:"operation"`
-	Err       error            `json:"err"`
+	Err       *api.ArtiError   `json:"err"`
+}
+
+func (r *UpdateResult) Error() *api.ArtiError {
+	return r.Err
 }
 
 /**********/
@@ -102,5 +120,9 @@ type UploadOperation struct {
 
 type UploadResult struct {
 	Operation *UploadOperation `json:"operation"`
-	Err       error            `json:"err"`
+	Err       *api.ArtiError   `json:"err"`
+}
+
+func (r *UploadResult) Error() *api.ArtiError {
+	return r.Err
 }
